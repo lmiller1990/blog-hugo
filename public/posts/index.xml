@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Posts on My New Hugo Site</title>
+    <link>http://localhost:1313/posts/</link>
+    <description>Recent content in Posts on My New Hugo Site</description>
+    <generator>Hugo -- 0.139.4</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 14 Dec 2024 17:36:13 +1000</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Introduction to Metagenomics</title>
+      <link>http://localhost:1313/posts/my-first-post/</link>
+      <pubDate>Sat, 14 Dec 2024 17:36:13 +1000</pubDate>
+      <guid>http://localhost:1313/posts/my-first-post/</guid>
+      <description>&lt;p&gt;I am studying bioinformatics, and through my work at &lt;a href=&#34;https://microba.com/&#34;&gt;Microba&lt;/a&gt;, I became interested in metagenomics.&lt;/p&gt;
+&lt;p&gt;This posts serves as a basic introduction to metagenomcs for software engineers. It also introduces basic biology and genomics!&lt;/p&gt;
+&lt;p&gt;Get some data: &lt;a href=&#34;https://www.ebi.ac.uk/ena/browser/view/SAMEA115625108?show=reads&#34;&gt;https://www.ebi.ac.uk/ena/browser/view/SAMEA115625108?show=reads&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This is brent goose faecal sample. There should be plenty of plasmids here. I want to use spades to assemble the plasmids.&lt;/p&gt;
+&lt;p&gt;Get the data using &lt;code&gt;get_data.sh&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR131/023/ERR13148223/ERR13148223_2.fastq.gz
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR131/023/ERR13148223/ERR13148223_1.fastq.gz
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;take-a-look&#34;&gt;Take a look&lt;/h2&gt;
+&lt;p&gt;The datasets are both 2GB or so even with gzip. How many reads?&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

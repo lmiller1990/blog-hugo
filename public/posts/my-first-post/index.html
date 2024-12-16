@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Introduction to Metagenomics | My New Hugo Site</title>
+<meta name="keywords" content="">
+<meta name="description" content="I am studying bioinformatics, and through my work at Microba, I became interested in metagenomics.
+This posts serves as a basic introduction to metagenomcs for software engineers. It also introduces basic biology and genomics!
+Get some data: https://www.ebi.ac.uk/ena/browser/view/SAMEA115625108?show=reads
+This is brent goose faecal sample. There should be plenty of plasmids here. I want to use spades to assemble the plasmids.
+Get the data using get_data.sh:
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR131/023/ERR13148223/ERR13148223_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR131/023/ERR13148223/ERR13148223_1.fastq.gz
+Take a look
+The datasets are both 2GB or so even with gzip. How many reads?">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/my-first-post/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d6fcd20a4fb86efa4dfac8ec95da60244cc8871042183da1ef28e3a762ad79c8.css" integrity="sha256-1vzSCk&#43;4bvpN&#43;sjsldpgJEzIhxBCGD2h7yjjp2Ktecg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/my-first-post/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="My New Hugo Site (Alt + H)">My New Hugo Site</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Introduction to Metagenomics
+    </h1>
+    <div class="post-meta"><span title='2024-12-14 17:36:13 +1000 AEST'>December 14, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>I am studying bioinformatics, and through my work at <a href="https://microba.com/">Microba</a>, I became interested in metagenomics.</p>
+<p>This posts serves as a basic introduction to metagenomcs for software engineers. It also introduces basic biology and genomics!</p>
+<p>Get some data: <a href="https://www.ebi.ac.uk/ena/browser/view/SAMEA115625108?show=reads">https://www.ebi.ac.uk/ena/browser/view/SAMEA115625108?show=reads</a></p>
+<p>This is brent goose faecal sample. There should be plenty of plasmids here. I want to use spades to assemble the plasmids.</p>
+<p>Get the data using <code>get_data.sh</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR131/023/ERR13148223/ERR13148223_2.fastq.gz
+</span></span><span style="display:flex;"><span>wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR131/023/ERR13148223/ERR13148223_1.fastq.gz
+</span></span></code></pre></div><h2 id="take-a-look">Take a look<a hidden class="anchor" aria-hidden="true" href="#take-a-look">#</a></h2>
+<p>The datasets are both 2GB or so even with gzip. How many reads?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>gzcat data/11299_45_S149_R1_001.fastq.gz | wc -l <span style="color:#75715e">#=&gt; 147402040</span>
+</span></span></code></pre></div><p>147m reads.</p>
+<p>They are 150bp long - illumina data. We can confirm:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>gzcat data/11299_45_S149_R1_001.fastq.gz | head -n <span style="color:#ae81ff">4</span> | awk <span style="color:#e6db74">&#39;NR % 4 == 2 {print length($0)}&#39;</span> <span style="color:#75715e">#=&gt; 150</span>
+</span></span></code></pre></div><p>Just look at the second entry and see the length. As a reminder, fastq is 4 lines: header, read, +, quality.</p>
+<pre tabindex="0"><code class="language-fastq" data-lang="fastq">@A00940:346:H7FY3DSXC:2:1101:2067:1000:ATCTCGTATTC 1:N:0:ATGCTCCC+CCCTGCTG
+CATACAAATTGTTCTCATCATACCCAACGAAAGCAACCTTGAGAGACTTGCTCCACAAGAGGACCACAGATCGGAAGAGCACACGTCTGAACTCCAGTCACATGCTCCCATCTCGTATGCCGTCTTCTGCTTGAAAAGGTGGGGGGGGGG
++
+FFFFFFFFFFFFFFFFFFFFFFFFF:FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:FF,:F,::,,:,,,:,,,,,,:,:,,,::FFFFFFFF
+</code></pre><p>To get some working quickly, we can make a subset of the data using <code>seqtk</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>seqtk sample -s100 11299_45_S149_R1_001.fastq.gz <span style="color:#ae81ff">100000</span> &gt; subset/subsampled_R1.fastq
+</span></span><span style="display:flex;"><span>seqtk sample -s100 11299_45_S149_R2_001.fastq.gz <span style="color:#ae81ff">100000</span> &gt; subset/subsampled_R2.fastq
+</span></span></code></pre></div><p>Some basic QC, remove adapters, etc, with <code>fastp</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>./fastp -i subset/subsampled_R1.fastq <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -I subset/subsampled_R2.fastq <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -o R1.fastq.gz <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -O R2.fastq.gz  <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --disable_length_filtering <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cut_mean_quality <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --qualified_quality_phred <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --low_complexity_filter <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cut_front <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cut_tail
+</span></span></code></pre></div><p>Finally, we run <code>spades.py</code> with the <code>--plasmid</code> flag.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>spades.py --pe1-1 R1.fastq.gz --pe1-2 R2.fastq.gz -o spades_output --meta
+</span></span></code></pre></div><p>The output is something like this:</p>
+<pre tabindex="0"><code>spades_output/
+|-- K21
+|-- K33
+|-- K55
+|-- assembly_graph.fastg
+|-- assembly_graph_with_scaffolds.gfa
+|-- before_rr.fasta
+|-- contigs.fasta
+|-- contigs.paths
+|-- corrected
+|-- dataset.info
+|-- first_pe_contigs.fasta
+|-- input_dataset.yaml
+|-- misc
+|-- params.txt
+|-- scaffolds.fasta
+|-- scaffolds.paths
+|-- spades.log
+|-- tmp
+`-- warnings.log
+</code></pre><p>The interesting files are</p>
+<ul>
+<li>contigs.fasta: resulting contig sequences in FASTA format;</li>
+<li>scaffolds.fasta: resulting scaffold sequences in FASTA format;</li>
+<li>assembly_graph.gfa: assembly graph and scaffolds paths in GFA 1.0 format;</li>
+<li>assembly_graph.fastg: assembly graph in FASTG format;</li>
+<li>contigs.paths: paths in the assembly graph corresponding to contigs.fasta;</li>
+<li>scaffolds.paths: paths in the assembly graph corresponding to scaffolds.fasta;</li>
+<li>spades.log: file with all log messages.</li>
+</ul>
+<p>I grabbed this list from the paper, <a href="https://currentprotocols.onlinelibrary.wiley.com/doi/full/10.1002/cpbi.102">Using SPAdes De Novo Assembler</a>.</p>
+<p><code>contigs.fasta</code> has 8177 sequences: <code>cat spades_output/contigs.fasta | grep &quot;^&gt;&quot; | wc -l</code>. Remember, this is using the subset of our data - the full contigs list would be much longer if running against a larger dataset.</p>
+<p>We don&rsquo;t know the organisms, or how many are present - there could be just 1, to whose genome all 8177 contigs belong. Or, there could be a much larger number. In all likelihood, there are many different organisms in the sample (bacteria, various types, archaea, etc).</p>
+<p>Remember, the goal is to get a full set of sequences that represents every organism in the sample. Ideally, a full taxanomic classification.</p>
+<p>As a reminder, the taxanomical classifications are:</p>
+<p><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Taxonomic_Rank_Graph.svg/1280px-Taxonomic_Rank_Graph.svg.png"></p>
+<p>This analysis is about gut bacteria, so the useful levels of taxanomic classification are generally:</p>
+<ul>
+<li>Phylum. Example:
+<ul>
+<li>Bacteroidetes</li>
+<li>Firmicutes</li>
+</ul>
+</li>
+<li>Genus: <em>Bacteroides</em>, <em>Lactobacillus</em>, <em>Clostridium</em>. Often combined with phylum, for example <em>Firmicutes Clostridium</em>.</li>
+<li>Species: Another subcategory. In <em>Clostridium</em> there is <em>difficile</em>, so you could say <em>Clostridium difficile</em>. This particular one is known to cause diarrhea.</li>
+</ul>
+<p>Back to the spades output: metaSPAdes, which is the tool used when running <code>--meta</code>, is a <strong>consensus assembly</strong>. From the metaSPAdes paper:</p>
+<blockquote>
+<p>There is no universal outcome for metagenome assembly. The <strong>ideal scenario is to obtain the complete genome sequence of each and every species</strong> presented in the dataset. However, usually this is not possible &hellip; to deal with this problem, metaSPAdes aims to achieve a so-called <strong>consensus assembly by detecting and masking variations between seemingly related strains</strong>.</p>
+</blockquote>
+<p>So, even with a lot of data and the contigs, we may loose some granularity because within each species, there can be different strains (where a single species. For example: several different <strong>Clostridium difficile</strong> variations - a single base can make a difference!</p>
+<p>Either way, now we have a lot of contigs, we can attempt to sort them out. This is called <strong>binning</strong>, where we group the contigs based on ones that look like they belong together. The perfect outcome would be species level bins, but the goal here is <strong>putting the ones that are closely related together</strong>.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2024 <a href="http://localhost:1313/">My New Hugo Site</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
